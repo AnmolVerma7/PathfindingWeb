@@ -80,6 +80,7 @@ body, html {
 
 .nav-accent {
     color: var(--accent-secondary); /* Red */
+    font-family: var(--font-code);
     text-shadow: 0 0 8px rgba(255, 0, 60, 0.6);
 }
 

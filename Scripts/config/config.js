@@ -4,15 +4,15 @@
   const colors = {
     WHITE: "#FFFFFF",
     BLACK: "#1a1a24",
-    RED: "#ff003c",
-    GREEN: "#00f3ff",
+    RED: "#8B0000",
+    GREEN: "#005f6b",
     BLUE: "#3333FF",
     YELLOW: "#FFFF33",
     PURPLE: "#FFE600",
     ORANGE: "#00f3ff",
     TURQUOISE: "#ff003c",
     GREY: "#AAAAAA",
-    GOLD: "#FFD700"
+    GOLD: "#FFE600"
   };
 
   const AppConfig = {
