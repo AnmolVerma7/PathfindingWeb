@@ -1,0 +1,156 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinding Visualizer</title>
+    <link rel="stylesheet" href="Styles/main.css">
+    <link rel="stylesheet" href="Styles/animations.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="canvas-container">
+        <canvas id="gridCanvas"></canvas>
+    </div>
+    
+    <div class="controls-panel" id="controlsPanel">
+        <button class="toggle-panel" id="togglePanel">☰</button>
+        <div class="panel-content">
+            <h2 class="panel-title">Pathfinding Visualizer</h2>
+            <div class="control-group">
+                <label for="algorithm">Algorithm:</label>
+                <select id="algorithm">
+                    <option value="astar">A* Algorithm</option>
+                    <option value="dijkstra">Dijkstra's Algorithm</option>
+                    <option value="greedy">Greedy Best-First Search</option>
+                </select>
+                
+                <div class="algorithm-info" id="algorithmInfo">
+                    A* Algorithm balances between path length and distance to target, guaranteeing the shortest path.
+                </div>
+                
+                <div class="toggle-option">
+                    <span>Animation Speed:</span>
+                    <select id="speedSelect">
+                        <option value="0">Instant</option>
+                        <option value="5">Very Fast</option>
+                        <option value="20" selected>Fast</option>
+                        <option value="50">Normal</option>
+                        <option value="100">Slow</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <div class="toggle-option">
+                    <span>3D Visualization:</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="viewToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-option">
+                    <span>Grid Size:</span>
+                    <div class="slider-container">
+                        <input type="range" id="gridSizeSlider" 
+                               min="20" max="150" value="50" 
+                               class="size-slider">
+                        <span id="gridSizeValue">50 columns</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <div class="button-group">
+                    <button id="startBtn">Visualize</button>
+                    <button id="clearBtn">Clear All</button>
+                </div>
+                <button id="clearPathBtn">Clear Path</button>
+            </div>
+            
+            <div class="control-group">
+                <h3 style="font-size: 14px; margin-bottom: 8px;">Legend:</h3>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #FFA500;"></div>
+                        <span>Start</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #40E0D0;"></div>
+                        <span>End</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #000000;"></div>
+                        <span>Wall</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #00FF00;"></div>
+                        <span>Open</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #FF0000;"></div>
+                        <span>Closed</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #800080;"></div>
+                        <span>Path</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="shortcuts">
+                <h3>Keyboard Shortcuts:</h3>
+                <div class="shortcut-list">
+                    <p><span>Run Algorithm</span> <span class="key">Space</span></p>
+                    <p><span>Clear Grid</span> <span class="key">C</span></p>
+                    <p><span>Clear Path</span> <span class="key">P</span></p> 
+                    <p><span>Toggle 2D/3D</span> <span class="key">V</span></p>
+                    <p><span>2D Pan View</span> <span class="key">Shift + Drag</p>
+                    <p><span>2D Zoom In/Out</span> <span>Mouse Wheel</span></p>
+                    <p><span>Remove Node</span> <span class="key">Right Click</span></p>
+                    <p><span>Debug Mode</span> <span class="key">`</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="status-info" id="statusInfo">
+        Ready. Click to place start point.
+    </div>
+    
+    <div class="tutorial" id="tutorial">
+        <h3>Welcome to Pathfinding Visualizer!</h3>
+        <p>This tool helps you visualize how different pathfinding algorithms work on a grid.</p>
+        
+        <p><strong>Getting Started:</strong></p>
+        <ul>
+            <li>First click places a start point (orange)</li>
+            <li>Second click places an end point (turquoise)</li>
+            <li>Additional clicks create walls/obstacles</li>
+            <li>Right-click to remove a node</li>
+            <li>Press Space or click "Visualize" to run the algorithm</li>
+        </ul>
+        
+        <p><strong>Special Features:</strong></p>
+        <ul>
+            <li>Toggle between 2D and 3D visualization</li>
+            <li>Use mouse wheel to zoom in/out</li>
+            <li>Hold Shift + drag to pan around (when zoomed in)</li>
+        </ul>
+        
+        <button id="tutorialCloseBtn">Got It!</button>
+    </div>
+
+    <!-- Load necessary scripts -->
+    <script defer src="Scripts/config/config.js"></script>
+    <script defer src="Scripts/state/VisualizerState.js"></script>
+    <script defer src="Scripts/renderers/Renderer2D.js"></script>
+    <script defer src="Scripts/input/InputController.js"></script>
+    <script defer src="Scripts/PriorityQueue.js"></script>
+    <script defer src="Scripts/Spot.js"></script>
+    <script defer src="Scripts/Grid.js"></script>
+    <script defer src="Scripts/Algorithms.js"></script>
+    <script defer src="Scripts/UIEffects.js"></script>
+    <script defer src="Scripts/PathfindingVisualizer.js"></script>
+</body>
+</html>
