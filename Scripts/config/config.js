@@ -8,7 +8,7 @@
     GREEN: "#00f3ff",
     BLUE: "#3333FF",
     YELLOW: "#FFFF33",
-    PURPLE: "#ffffff",
+    PURPLE: "#FFE600",
     ORANGE: "#00f3ff",
     TURQUOISE: "#ff003c",
     GREY: "#AAAAAA",
