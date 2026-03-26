@@ -31,7 +31,7 @@ class UIEffects {
             this.tutorial.classList.add('show');
         }
         
-        console.log('UIEffects initialized successfully');
+
     }
 
     setupEventListeners() {

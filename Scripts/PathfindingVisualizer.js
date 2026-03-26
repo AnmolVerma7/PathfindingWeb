@@ -21,7 +21,7 @@ const ALGORITHM_INFO = {
 
 class PathfindingVisualizer {
     constructor() {
-        console.log("Initializing PathfindingVisualizer...");
+
 
         // Initialize canvas
     this.canvas = document.getElementById('gridCanvas');
@@ -30,7 +30,6 @@ class PathfindingVisualizer {
             return;
         }
     this.ctx = this.canvas.getContext('2d');
-    // Initialize renderer and state manager (lightweight)
     if (typeof Renderer2D !== 'undefined') {
         this.renderer2D = new Renderer2D(this.canvas);
     }
@@ -38,18 +37,15 @@ class PathfindingVisualizer {
         this.state = new VisualizerState();
         this.state.set({ is3DView: false, zoomLevel: 1, panOffset: {x:0,y:0}, selectedAlgorithm: 'astar' });
     }
-    // Track DPR and CSS pixel dimensions for correct 2D math
     this.dpr = window.devicePixelRatio || 1;
     this.canvasCssWidth = 0;
     this.canvasCssHeight = 0;
         
-        // Force proper canvas dimensions immediately
         this.forceCanvasDimensions();
         if (this.renderer2D && this.renderer2D.resizeToWindow) {
             this.renderer2D.resizeToWindow();
         }
         
-        // Set default properties
         this.is3DView = false;
         this.zoomLevel = 1;
         this.panOffset = { x: 0, y: 0 };
@@ -60,27 +56,22 @@ class PathfindingVisualizer {
         this.isRunning = false;
         this.isCancelled = false;
         this.animationDelay = parseInt(document.getElementById('speedSelect')?.value) || 20;
-        // App background color is configurable via CSS variable --app-bg in Styles/main.css
-        const appBgVar = (typeof window !== 'undefined' && window.getComputedStyle)
-            ? getComputedStyle(document.documentElement).getPropertyValue('--app-bg')
-            : '';
+
+        const appBgVar = getComputedStyle(document.documentElement).getPropertyValue('--app-bg');
         const appBg = (appBgVar && appBgVar.trim().length > 0) ? appBgVar.trim() : '#B2BEB5';
         this.background2D = appBg;
         this.background3D = appBg;
         
-        // Add 3D cell size properties
         this.cell3DSizes = {
-            barrier: 0.8,    // Tall barriers
-            startEnd: 0.4,   // Start/End points
-            path: 0.2,       // Path cells
-            visited: 0.15,   // Visited cells
-            empty: 0.05      // Empty cells
+            barrier: 0.8,
+            startEnd: 0.4,
+            path: 0.2,
+            visited: 0.15,
+            empty: 0.05
         };
         
-        // Add 3D cell width/depth (affects spacing)
         this.cell3DWidth = 0.9;
 
-        // Add 3D camera configuration
         this.camera3DConfig = {
             position: { x: 25, y: 50, z: 50 },
             rotation: { x: -0.5, y: 0, z: 0 },
@@ -90,34 +81,23 @@ class PathfindingVisualizer {
             lookAt: { x: 25, y: 0, z: 25 }
         };
         
-        // Add debug properties
         this.isDebugMode = false;
         this.debugOverlay = null;
 
-        // Initialize grid with proper dimensions
         this.initializeGrid();
         
-        // Initialize UI elements and event listeners
         this.initUIElements();
         this.setupEventListeners();
         
-        // Remove multi-point related initialization
-        if (this.multiPointToggle) {
-            this.multiPointToggle.remove();
-        }
 
-        // Force an initial render
+
         this.render();
-        
-        console.log("PathfindingVisualizer initialized successfully");
 
-        // Show tutorial when first loaded
         const tutorial = document.getElementById('tutorial');
         if (tutorial) {
             tutorial.classList.add('show');
         }
 
-        // Initialize UI effects
         this.uiEffects = new UIEffects();
     }
 
@@ -142,7 +122,7 @@ class PathfindingVisualizer {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0); // reset to avoid compounding on resize
     this.ctx.scale(dpr, dpr);
         
-        console.log(`Canvas dimensions forced to ${windowWidth}x${windowHeight} (DPR: ${dpr})`);
+
     }
 
     initializeGrid() {
@@ -162,7 +142,7 @@ class PathfindingVisualizer {
         const rows = Math.floor(availableHeight / cellSize);
         const cols = requestedCols;
         
-        console.log(`Creating grid with ${rows}×${cols} cells, cell size: ${cellSize}px`);
+
         
         // Create new grid without preserving old state
         this.grid = new Grid(rows, cols);
@@ -242,7 +222,7 @@ class PathfindingVisualizer {
         this.renderer2D.resizeToWindow();
     }
         
-        console.log(`Canvas resized to ${windowWidth}x${windowHeight} (DPR: ${dpr})`);
+
         
         // Reinitialize the grid
         this.initializeGrid();
@@ -279,9 +259,8 @@ class PathfindingVisualizer {
         }
         
         return new Promise((resolve, reject) => {
-            console.log("Loading Three.js libraries...");
-            
-            // Create a global namespace for Three.js
+
+
             window.THREE = {};
             
             // Add Three.js core
@@ -290,17 +269,13 @@ class PathfindingVisualizer {
             document.head.appendChild(threeScript);
             
             threeScript.onload = () => {
-                console.log("Three.js core loaded successfully");
                 
                 // Add OrbitControls
                 const orbitScript = document.createElement('script');
                 orbitScript.src = 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js';
                 document.head.appendChild(orbitScript);
                 
-                orbitScript.onload = () => {
-                    console.log("OrbitControls loaded successfully");
-                    resolve(true);
-                };
+                orbitScript.onload = () => resolve(true);
                 
                 orbitScript.onerror = (error) => {
                     console.error("Failed to load OrbitControls:", error);
@@ -416,9 +391,7 @@ class PathfindingVisualizer {
         }
     }
 
-    // Add this method to your PathfindingVisualizer class
     applyCameraPositioningFixes() {
-        console.log("Applying camera positioning fixes...");
         
         // When grid size changes, update the 3D view properly
         const gridSizeSlider = document.getElementById('gridSizeSlider');
@@ -430,8 +403,6 @@ class PathfindingVisualizer {
                 if (gridSizeValue) {
                     gridSizeValue.textContent = `${size}×${size}`;
                 }
-                
-                console.log(`Grid size changed to ${size}`);
                 
                 // Recreate the grid with the new size
                 this.initializeGrid();
@@ -515,7 +486,7 @@ class PathfindingVisualizer {
         // Add the reset camera button
         addResetCameraButton();
         
-        console.log("Camera positioning fixes applied");
+
     }
 
     setup3DScene(container) {
@@ -781,7 +752,7 @@ class PathfindingVisualizer {
             }
         }
         
-        console.log(`Created 3D grid with ${this.cubes.length} cubes`);
+
         
         // Forced initial render to ensure all cubes are visible
         if (this.renderer && this.scene && this.camera) {
@@ -1305,8 +1276,7 @@ class PathfindingVisualizer {
                     this.render();
                 }
                 break;
-            case 'm': // Remove multi-point toggle handler
-                break;
+
             case 'v': // Toggle 2D/3D (changed from "https://esm.sh/d" to match HTML)
                 if (this.viewToggle) {
                     this.viewToggle.checked = !this.viewToggle.checked;
@@ -1511,11 +1481,11 @@ class PathfindingVisualizer {
         this.clearPathButton = document.getElementById('clearPathBtn');
         
         // Toggles
-        this.multiPointToggle = document.getElementById('multiPointToggle');
+
         this.viewToggle = document.getElementById('viewToggle');
         
         // Grid size selector
-        this.gridSizeSelect = document.getElementById('gridSizeSelect');
+
         
         // Panel and status
         this.controlsPanel = document.getElementById('controlsPanel');
@@ -1535,26 +1505,7 @@ class PathfindingVisualizer {
         this.algorithmInfo.textContent = ALGORITHM_INFO[this.selectedAlgorithm];
     }
 
-    updateNotchLine() {
-        const notch = document.getElementById('notchLine');
-        const panel = this.controlsPanel;
-        if (!notch || !panel) return;
-
-        // Hide notch when panel is collapsed
-        if (panel.classList.contains('collapsed')) {
-            notch.style.display = 'none';
-            return;
-        }
-
-        // Get panel's bounding rect and position the notch at
-        // the bottom-right clip-path corner
-        const rect = panel.getBoundingClientRect();
-        // The clip cuts at 15px from bottom-right
-        // Position the notch line's right-center transform-origin at that corner
-        notch.style.display = 'block';
-        notch.style.top  = (rect.bottom - 10) + 'px';   // just above the bottom clip point
-        notch.style.left = (rect.right  - 11) + 'px';   // centered on the diagonal
-    }
+    
     
     setupEventListeners() {
         // Canvas events
@@ -1725,13 +1676,10 @@ class PathfindingVisualizer {
                 } else {
                     this.togglePanelButton.textContent = '☰';
                 }
-                this.updateNotchLine();
             });
         }
 
-        // Position the notch-line element
-        this.updateNotchLine();
-        window.addEventListener('resize', () => this.updateNotchLine());
+
         
         // Tutorial close
         if (this.tutorialCloseButton) {
@@ -1808,7 +1756,7 @@ class PathfindingVisualizer {
     async runAlgorithm() {
         if (this.isRunning) return;
         
-        console.log("runAlgorithm called");
+
         
         // Check for valid start and end points
         if (this.grid.startSpots.length === 0) {
@@ -1837,7 +1785,7 @@ class PathfindingVisualizer {
         // Update all neighbors (crucial step that might be missing)
         this.grid.updateAllNeighbors();
         
-        console.log("Grid prepared, neighbors updated");
+
         
         // Choose algorithm
         let algorithm;
@@ -1855,7 +1803,7 @@ class PathfindingVisualizer {
                 algorithm = aStarAlgorithm;
         }
         
-        console.log(`Selected algorithm: ${this.selectedAlgorithm}`);
+
         
     let pathsFound = 0;
     let pathsNotFound = 0;
@@ -1864,7 +1812,7 @@ class PathfindingVisualizer {
         const startTime = performance.now();
         
         try {
-            console.log("Starting algorithm execution");
+
             
             const start = this.grid.startSpots[0];
             const end = this.grid.endSpots[0];
@@ -1878,12 +1826,10 @@ class PathfindingVisualizer {
                 this.draw.bind(this)
             );
             if (path) {
-                console.log(`Path found with length: ${path.length}`);
                 this.markPath(path);
                 this.grid.paths = [path];
                 pathsFound = 1;
             } else {
-                console.log("No path found");
                 pathsNotFound = 1;
             }
             
@@ -1923,7 +1869,7 @@ class PathfindingVisualizer {
                 this.updateStatus(`No paths found (${runTime}s)`);
             }
             
-            console.log("Algorithm execution completed");
+
         }
     }
 

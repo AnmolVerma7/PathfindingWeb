@@ -342,7 +342,7 @@ button:disabled {
     background-color: var(--bg-solid);
     border: 1px solid rgba(0, 243, 255, 0.3);
     transition: .3s;
-    border-radius: 0; /* Square edges for cyberpunk */
+    border-radius: 0;
 }
 
 .slider:before {
@@ -544,23 +544,7 @@ input:checked + .slider:before {
     text-transform: uppercase;
 }
 
-/* Keyboard shortcuts section */
-.shortcuts {
-    background: var(--bg-solid);
-    padding: 15px;
-    margin-top: 20px;
-    border: 1px solid rgba(0, 243, 255, 0.1);
-}
 
-.shortcuts h3 {
-    font-size: 20px;
-    color: var(--accent-primary);
-    margin-bottom: 12px;
-    font-family: var(--font-code);
-    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
-    padding-bottom: 5px;
-    font-weight: 400;
-}
 
 .shortcut-list {
     font-size: 14px;
@@ -613,11 +597,6 @@ input:checked + .slider:before {
     transition: opacity 0.3s ease;
     width: 100%;
     visibility: visible;
-}
-
-.controls-panel.collapsed .panel-content {
-    opacity: 0;
-    visibility: hidden;
 }
 
 .panel-title {

@@ -69,7 +69,7 @@ class Grid {
     
     // Method to update neighbors for all spots
     updateAllNeighbors() {
-        console.log("Updating all neighbors");
+
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.cols; j++) {
                 if (this.spots[i] && this.spots[i][j]) {
@@ -77,7 +77,7 @@ class Grid {
                 }
             }
         }
-        console.log("All neighbors updated");
+
     }
     
     // Check if a path exists between coordinates
