@@ -1,20 +1,46 @@
-# Pathfinding Algorithm Visualizer
-## Preview
+# PathfindingWeb (Pathfinding Algorithm Visualizer)
 
 ![DoubleAlgo](https://github.com/AnmolVerma7/Pathfinding-Visualizer/assets/90490916/70b2c8cc-bf5c-479e-ba4e-6d2cf8bba627)
 
-## Description
-This Python script, `PathfindingVisualizer.py`, provides a visual implementation of 2 pathfinding algorithms using Pygame. It's designed to visually demonstrate the most efficient path between two points in a 50x50 grid (but this can be changed in the code). The script allows users to interact with the grid, place start and end points, and visualize the pathfinding process in real time.
+A visualizer for pathfinding algorithms! This repository contains two versions of the visualizer:
+1. **Web Version**: A modern, interactive web-based visualizer built with HTML, CSS, and JavaScript.
+2. **Python Version**: The original version built with Python and Pygame.
 
-## Installation
-To run this script, you'll need Python and Pygame. If you don't have Pygame installed, you can install it via pip: `pip install pygame`
+---
 
-## Usage
-Run the script with the following command: `PathfindingVisualizer.py`
+## 🌐 Web Version
 
-Once the window opens, you can interact with the grid to set start and end points, as well as obstacles, and then watch the A* algorithm in action.
+The new Web Version provides a sleek, responsive, and interactive experience directly in your browser. 
 
-## Controls
+### Features
+- Visualization of various pathfinding algorithms
+- Interactive grid: draw walls, move start/end nodes
+- Control over animation speed
+- Clean, responsive design
+
+### Usage
+Simply open the hosted GitHub Pages link, or clone the repository and open `index.html` in your favorite web browser!
+
+---
+
+## 🐍 Python Version (Legacy)
+
+The original Python version provides a visual implementation of A* and Dijkstra's algorithms using Pygame on a 50x50 grid. You can find the source code in the `PythonVersion/` directory.
+
+### Installation
+To run this script, you'll need Python and Pygame. You can install Pygame via pip:
+```bash
+pip install pygame
+```
+
+### Usage
+Navigate to the `PythonVersion` folder and run the script:
+```bash
+cd PythonVersion
+python PathfindingVisualizer.py
+```
+
+### Controls
 - **Left Mouse Click**: Set the start point, end point, and draw obstacles.
 - **Right Mouse Click**: Remove nodes or obstacles.
 - **Spacebar**: Start the algorithm.
