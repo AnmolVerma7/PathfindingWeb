@@ -183,6 +183,8 @@ class PathfindingVisualizer {
         } else {
             this.zoomLevel = 0.88;
         }
+        // Store default zoom so we can use it as the minimum zoom floor
+        this.defaultZoom = this.zoomLevel;
         // Update state
         if (this.state && this.state.set) this.state.set({ zoomLevel: this.zoomLevel, panOffset: this.panOffset });
 
@@ -603,26 +605,28 @@ class PathfindingVisualizer {
         // Add event listeners for 3D interaction (mousedown is already added above)
         // Avoid duplicate registrations
         
-        // Modifier-based control modes: Shift = pan, Alt = rotate (both keep right-click free)
-        this._modKeys = { alt: false, shift: false };
+        // Alt = rotate mode; no modifier = editing mode
+        this._modKeys = { alt: false };
+
         this._onKeyDown3D = (e) => {
             if (e.key === 'Alt') { this._modKeys.alt = true; }
-            if (e.key === 'Shift') { this._modKeys.shift = true; }
             this.update3DControlMode();
         };
         this._onKeyUp3D = (e) => {
             if (e.key === 'Alt') { this._modKeys.alt = false; }
-            if (e.key === 'Shift') { this._modKeys.shift = false; }
             this.update3DControlMode();
         };
-    document.addEventListener('keydown', this._onKeyDown3D);
-    document.addEventListener('keyup', this._onKeyUp3D);
-    // Ensure mode is in sync when interacting with the canvas
-    this.renderer.domElement.addEventListener('mousedown', () => this.update3DControlMode());
-    this.renderer.domElement.addEventListener('mouseenter', () => this.update3DControlMode());
-    this.renderer.domElement.addEventListener('mouseleave', () => this.update3DControlMode());
-    // Initialize control mode
-    this.update3DControlMode();
+
+        document.addEventListener('keydown', this._onKeyDown3D);
+        document.addEventListener('keyup',   this._onKeyUp3D);
+
+        // Sync mode on canvas interaction
+        this.renderer.domElement.addEventListener('mousedown',  () => this.update3DControlMode());
+        this.renderer.domElement.addEventListener('mouseenter', () => this.update3DControlMode());
+        this.renderer.domElement.addEventListener('mouseleave', () => this.update3DControlMode());
+        this.update3DControlMode();
+
+
         
         // Prevent context menu on right click
         this.renderer.domElement.addEventListener('contextmenu', (e) => {
@@ -644,22 +648,12 @@ class PathfindingVisualizer {
     // Switch OrbitControls behavior based on modifier keys
     update3DControlMode() {
         if (!this.controls) return;
-        const { alt, shift } = this._modKeys || { alt: false, shift: false };
-        if (shift) {
-            // Shift: pan mode (left and middle pan), rotation disabled
-            this.controls.enabled = true;
-            this.controls.enableRotate = false;
-            if (THREE.MOUSE) {
-                this.controls.mouseButtons = {
-                    LEFT: THREE.MOUSE.PAN,
-                    MIDDLE: THREE.MOUSE.PAN,
-                    RIGHT: THREE.MOUSE.NONE
-                };
-            }
-        } else if (alt) {
-            // Alt: rotate mode (left rotate, middle pan)
+        const { alt } = this._modKeys || { alt: false };
+        if (alt) {
+            // Alt: orbit/rotate mode
             this.controls.enabled = true;
             this.controls.enableRotate = true;
+            this.controls.screenSpacePanning = false;
             if (THREE.MOUSE) {
                 this.controls.mouseButtons = {
                     LEFT: THREE.MOUSE.ROTATE,
@@ -1086,14 +1080,14 @@ class PathfindingVisualizer {
         
         if (e.button === 0) { // Left click
             if (e.shiftKey) {
-                // Always place walls when shift is pressed
-                if (!spot.is_start() && !spot.is_end()) {
-                    spot.make_barrier();
-                    this.dragStart = { x: mouseX, y: mouseY };
+                // Shift+drag pans only when zoomed in past the default level
+                if (this.zoomLevel > (this.defaultZoom || 0.88) + 0.01) {
                     this.isDragging = true;
-                    this.dragOperation = 'place';  // Track the operation
-                    this.updateStatus(`Wall placed at (${gridPos.row}, ${gridPos.col})`);
+                    this.dragStart = { x: mouseX, y: mouseY };
+                    this.dragOperation = 'pan';
+                    this.canvas.style.cursor = 'grabbing';
                 }
+                return; // always suppress wall-placement when shift held
             } else if (spot.is_start() || spot.is_end()) {
                 // Don't do anything if clicking on existing start/end point
                 return;
@@ -1183,24 +1177,19 @@ class PathfindingVisualizer {
         }
         
         if (this.isDragging) {
-            if (this.is3DView) return;  // Skip the old 2D drag logic in 3D mode
+            if (this.is3DView) return;
             
-            if (e.shiftKey && this.zoomLevel > 1.0) {
-                // Pan the view with shift + drag (only when zoomed in)
+            if (this.dragOperation === 'pan') {
+                // Pan the view — works at any zoom level
                 const deltaX = mouseX - this.dragStart.x;
                 const deltaY = mouseY - this.dragStart.y;
                 
-                // Calculate bounds to keep grid visible
                 const cellSize = this.grid.cellSize || 20;
-                // Actual grid dimensions in CSS pixels at zoom 1
-                const gridWidth = this.grid.cols * cellSize;
+                const gridWidth  = this.grid.cols * cellSize;
                 const gridHeight = this.grid.rows * cellSize;
-                
-                // Calculate max pan distances to keep at least 25% of grid visible
-                const maxPanX = (gridWidth * this.zoomLevel - this.canvasCssWidth) / (2 * this.zoomLevel) + (gridWidth * 0.25);
+                const maxPanX = (gridWidth  * this.zoomLevel - this.canvasCssWidth)  / (2 * this.zoomLevel) + (gridWidth  * 0.25);
                 const maxPanY = (gridHeight * this.zoomLevel - this.canvasCssHeight) / (2 * this.zoomLevel) + (gridHeight * 0.25);
                 
-                // Apply pan with bounds checking
                 this.panOffset.x = Math.min(maxPanX, Math.max(-maxPanX, this.panOffset.x + deltaX / this.zoomLevel));
                 this.panOffset.y = Math.min(maxPanY, Math.max(-maxPanY, this.panOffset.y + deltaY / this.zoomLevel));
                 
@@ -1253,20 +1242,14 @@ class PathfindingVisualizer {
         const gridWidth = this.grid.cols * cellSize;
         const gridHeight = this.grid.rows * cellSize;
         
-    // Minimum zoom: ensure grid fills the screen (CSS pixels)
-    const minZoomX = this.canvasCssWidth / gridWidth;
-    const minZoomY = this.canvasCssHeight / gridHeight;
-        const minZoom = Math.max(minZoomX, minZoomY, 0.5); // Never zoom out beyond filling the window
-        
-        // Maximum zoom: reasonable limit for detail
+        const minZoom = this.defaultZoom || 0.88; // Floor is always the default zoom level
         const maxZoom = 5.0;
         
-        // Apply limits and reset to 1 if close to original zoom
         this.zoomLevel = Math.max(minZoom, Math.min(maxZoom, this.zoomLevel));
         
-        // Reset to original view if zoom is close to 1
-        if (Math.abs(this.zoomLevel - 1.0) < 0.1) {
-            this.zoomLevel = 1.0;
+        // Snap back to default and reset pan when we reach the floor
+        if (this.zoomLevel <= minZoom + 0.01) {
+            this.zoomLevel = minZoom;
             this.panOffset = { x: 0, y: 0 };
         } else {
             // Only apply pan adjustment if zoom actually changed
@@ -1457,6 +1440,7 @@ class PathfindingVisualizer {
                 this.setTopDownCameraWithMargin(0.15);
                 this.renderer.render(this.scene, this.camera);
             }
+            this.showViewToast('SWITCHED TO 3D VIEW');
         } else {
             // Show 2D canvas
             this.canvas.style.display = 'block';
@@ -1467,9 +1451,52 @@ class PathfindingVisualizer {
                 container.style.display = 'none';
             }
             
-            this.updateStatus("Switched to 2D view");
+            this.showViewToast('SWITCHED TO 2D VIEW');
             this.render();
         }
+    }
+
+    showViewToast(message) {
+        // Remove any existing toast
+        const existing = document.getElementById('viewToast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'viewToast';
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(5, 5, 8, 0.92);
+            color: var(--accent-primary, #00f3ff);
+            border: 1px solid var(--accent-primary, #00f3ff);
+            padding: 18px 40px;
+            font-family: 'VT323', monospace;
+            font-size: 28px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            box-shadow: 0 0 30px rgba(0, 243, 255, 0.3), inset 0 0 20px rgba(0, 243, 255, 0.05);
+        `;
+        document.body.appendChild(toast);
+
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+
+        // Animate out and remove
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            setTimeout(() => toast.remove(), 250);
+        }, 1400);
     }
 
     initUIElements() {
@@ -1506,6 +1533,27 @@ class PathfindingVisualizer {
     
     updateAlgorithmInfo() {
         this.algorithmInfo.textContent = ALGORITHM_INFO[this.selectedAlgorithm];
+    }
+
+    updateNotchLine() {
+        const notch = document.getElementById('notchLine');
+        const panel = this.controlsPanel;
+        if (!notch || !panel) return;
+
+        // Hide notch when panel is collapsed
+        if (panel.classList.contains('collapsed')) {
+            notch.style.display = 'none';
+            return;
+        }
+
+        // Get panel's bounding rect and position the notch at
+        // the bottom-right clip-path corner
+        const rect = panel.getBoundingClientRect();
+        // The clip cuts at 15px from bottom-right
+        // Position the notch line's right-center transform-origin at that corner
+        notch.style.display = 'block';
+        notch.style.top  = (rect.bottom - 10) + 'px';   // just above the bottom clip point
+        notch.style.left = (rect.right  - 11) + 'px';   // centered on the diagonal
     }
     
     setupEventListeners() {
@@ -1677,8 +1725,13 @@ class PathfindingVisualizer {
                 } else {
                     this.togglePanelButton.textContent = '☰';
                 }
+                this.updateNotchLine();
             });
         }
+
+        // Position the notch-line element
+        this.updateNotchLine();
+        window.addEventListener('resize', () => this.updateNotchLine());
         
         // Tutorial close
         if (this.tutorialCloseButton) {

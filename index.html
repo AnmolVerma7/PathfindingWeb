@@ -19,6 +19,7 @@
     
     <div class="controls-panel" id="controlsPanel">
         <button class="toggle-panel" id="togglePanel">☰</button>
+
         <div class="panel-content">
             <h2 class="panel-title">Pathfinding Visualizer</h2>
             <div class="control-group">
@@ -89,21 +90,21 @@
                         <span>Wall</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #00f3ff;"></div>
+                        <div class="color-box" style="background-color: #FFE600;"></div>
+                        <span>Path</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="color-box" style="background-color: #005f6b;"></div>
                         <span>Open</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #ff003c;"></div>
+                        <div class="color-box" style="background-color: #8B0000;"></div>
                         <span>Closed</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="color-box" style="background-color: #FFE600;"></div>
-                        <span>Path</span>
                     </div>
                 </div>
             </div>
             
-            <div class="shortcuts">
+            <div class="control-group">
                 <h3>Keyboard Shortcuts:</h3>
                 <div class="shortcut-list">
                     <p><span>Run Algorithm</span> <span class="key">Space</span></p>
@@ -117,9 +118,10 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div><!-- /.controls-panel -->
     
     <div class="status-info" id="statusInfo">
+
         Ready. Click to place start point.
     </div>
     
@@ -139,8 +141,9 @@
         <p><strong>Special Features:</strong></p>
         <ul>
             <li>Toggle between 2D and 3D visualization</li>
-            <li>Use mouse wheel to zoom in/out</li>
-            <li>Hold Shift + drag to pan around (when zoomed in)</li>
+            <li>Use mouse wheel to zoom in/out (2D)</li>
+            <li>Shift + drag to pan (2D, when zoomed in)</li>
+            <li>Hold Alt + drag to orbit in 3D view</li>
         </ul>
         
         <button id="tutorialCloseBtn">Got It!</button>
