@@ -150,10 +150,10 @@ class PathfindingVisualizer {
         const gridSizeSlider = document.getElementById('gridSizeSlider');
         const requestedCols = parseInt(gridSizeSlider?.value || 50);
         
-        // Calculate available space (entire window with small padding)
-        const padding = 5;
-        const availableWidth = window.innerWidth - (padding * 1.5);
-        const availableHeight = window.innerHeight - (padding * 1.5);
+        // Calculate available space with padding so the dark background peeks through
+        const padding = 40;
+        const availableWidth = window.innerWidth - (padding * 2);
+        const availableHeight = window.innerHeight - (padding * 2);
         
         // Calculate cell size based on requested columns
         const cellSize = Math.floor(availableWidth / requestedCols);
@@ -178,10 +178,10 @@ class PathfindingVisualizer {
                 this.canvasCssWidth / gridPixelWidth,
                 this.canvasCssHeight / gridPixelHeight
             );
-            // Only scale down to fit; don't upscale above 1 to preserve original look on large screens
-            this.zoomLevel = Math.min(1, fitZoom);
+            // Scale down to 88% of fit so the dark background is always visible around the grid
+            this.zoomLevel = Math.min(0.88, fitZoom * 0.88);
         } else {
-            this.zoomLevel = 1;
+            this.zoomLevel = 0.88;
         }
         // Update state
         if (this.state && this.state.set) this.state.set({ zoomLevel: this.zoomLevel, panOffset: this.panOffset });
