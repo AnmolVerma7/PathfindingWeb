@@ -5,9 +5,14 @@
     <title>Pathfinding Visualizer</title>
     <link rel="stylesheet" href="Styles/main.css">
     <link rel="stylesheet" href="Styles/animations.css">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="top-nav">
+        <span class="nav-title">AV://PATHFINDING.exe BUILD v0.3.0</span>
+        <span class="nav-status">STATUS: ONLINE <span class="status-dot">●</span></span>
+    </div>
+    
     <div id="canvas-container">
         <canvas id="gridCanvas"></canvas>
     </div>
@@ -72,27 +77,27 @@
                 <h3 style="font-size: 14px; margin-bottom: 8px;">Legend:</h3>
                 <div class="legend">
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #FFA500;"></div>
+                        <div class="color-box" style="background-color: #00f3ff;"></div>
                         <span>Start</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #40E0D0;"></div>
+                        <div class="color-box" style="background-color: #ff003c;"></div>
                         <span>End</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #000000;"></div>
+                        <div class="color-box" style="background-color: #1a1a24;"></div>
                         <span>Wall</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #00FF00;"></div>
+                        <div class="color-box" style="background-color: #00f3ff;"></div>
                         <span>Open</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #FF0000;"></div>
+                        <div class="color-box" style="background-color: #ff003c;"></div>
                         <span>Closed</span>
                     </div>
                     <div class="legend-item">
-                        <div class="color-box" style="background-color: #800080;"></div>
+                        <div class="color-box" style="background-color: #ffffff;"></div>
                         <span>Path</span>
                     </div>
                 </div>

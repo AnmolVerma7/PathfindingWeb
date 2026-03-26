@@ -25,7 +25,7 @@
     }
 
     clear(background){
-      this.ctx.fillStyle = background || '#B2BEB5';
+      this.ctx.fillStyle = background || '#e0e0e0';
       this.ctx.fillRect(0, 0, this.cssWidth, this.cssHeight);
     }
 
@@ -34,7 +34,7 @@
       if (!grid || !grid.spots) return;
       const zoom = opts?.zoomLevel ?? 1;
       const pan = opts?.panOffset ?? {x:0,y:0};
-      const background = opts?.background ?? '#B2BEB5';
+      const background = opts?.background ?? '#e0e0e0';
 
       this.clear(background);
       const cellSize = grid.cellSize || 20;
@@ -56,7 +56,7 @@
           const y = j * cellSize;
           this.ctx.fillStyle = spot.color || COLORS.WHITE;
           this.ctx.fillRect(x, y, cellSize, cellSize);
-          this.ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+          this.ctx.strokeStyle = '#000000';
           this.ctx.strokeRect(x, y, cellSize, cellSize);
           if ((spot.is_start() || spot.is_end()) && spot.pointLabel) {
             this.ctx.fillStyle = 'rgba(0,0,0,0.8)';

@@ -1,0 +1,50 @@
+:root {
+  /* Core Backgrounds - Deep Black/Matrix Style */
+  --colors-bg--300: #050505;
+  --colors-bg--500: #000000;
+
+  /* Primary Accents - Matrix Green/Cyan */
+  --colors-primary--200: #a7f3d0;
+  --colors-primary--300: #6ee7b7;
+  --colors-primary--500: #00e5ff; /* Matrix Rain Color */
+  --colors-primary--600: #00b8cc;
+  --colors-primary--700: #008a99;
+  --colors-primary--800: #005c66;
+  --colors-primary--900: #002e33;
+
+  /* Secondary Accents - Cyberpunk Red */
+  --colors-secondary--500: #ff003c;
+  --colors-secondary--900: #990024;
+
+  /* Tertiary/Text - Muted White/Grey */
+  --colors-tertiary--500: #f0f0f0;
+
+  /* Semantic Colors */
+  --colors-on_bg--500: var(--colors-primary--500);
+  --colors-on_tertiary--500: var(--colors-bg--300);
+  --colors-on_primary--500: #000000;
+  --colors-active--500: #00ff00; /* Bright Green for active states */
+
+  /* Fonts */
+  --fonts-primary: "Rajdhani", sans-serif;
+  --fonts-secondary: "VT323", monospace;
+
+  /* Effects */
+  --colors-glow--red: #d10000;
+  --ui-glow: 0 0 10px var(--colors-glow--red);
+  --ui-glow-borders--500: 0 0 5px var(--colors-glow--red);
+  --ui-glow-color: var(--colors-glow--red);
+  --ui-glow-text: 0 0 10px var(--colors-glow--red);
+  --ui-glow-text--dimmed: 0 0 5px #d10000;
+
+  --ui-elevation--1: 2px 2px 0 rgba(0, 0, 0, 0.8);
+  --ui-notch-amount: 1rem;
+  --ui-notch-hypotenuse: 22.627416px;
+  --ui-notch-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--ui-notch-amount) + 2px),
+    calc(100% - var(--ui-notch-amount) + 2px) 100%,
+    0 100%
+  );
+}

@@ -3,14 +3,14 @@
   // You can change these colors and it will reflect across 2D/3D renderers and Spot states.
   const colors = {
     WHITE: "#FFFFFF",
-    BLACK: "#000000",
-    RED: "#FF3333",
-    GREEN: "#33FF33",
+    BLACK: "#1a1a24",
+    RED: "#ff003c",
+    GREEN: "#00f3ff",
     BLUE: "#3333FF",
     YELLOW: "#FFFF33",
-    PURPLE: "#9933FF",
-    ORANGE: "#FF9900",
-    TURQUOISE: "#33FFEE",
+    PURPLE: "#ffffff",
+    ORANGE: "#00f3ff",
+    TURQUOISE: "#ff003c",
     GREY: "#AAAAAA",
     GOLD: "#FFD700"
   };
